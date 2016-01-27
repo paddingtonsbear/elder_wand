@@ -1,0 +1,10 @@
+en:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            invalid_password: authenticate:
+  elder_wand:
+    authentication:
+      invalid_password: 'Invalid username or password'
