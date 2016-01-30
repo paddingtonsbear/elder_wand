@@ -1,6 +1,8 @@
 module ElderWand
   class AccessToken < OAuth2::AccessToken
-    attr_accessor :resource_owner_id, :scopes
+    attr_accessor :resource_owner_id, :scopes, :revoked, :expired
+    alias_method :revoked?, :revoked
+    alias_method :expired?, :expired
 
     # Initalize an AccessToken
     #
@@ -19,18 +21,30 @@ module ElderWand
     def initialize(client, token, opts = {}) # rubocop:disable Metrics/AbcSize
       @client            = client
       @token             = token.to_s
-      @scopes            = opts.delete(:scopes) || opts.delete('scopes')
+      @scopes            = opts.delete(:scopes) || opts.delete('scopes') || []
       @expires_in        = opts.delete(:expires_in_seconds) || opts.delete('expires_in_seconds')
       @expires_in      ||= opts.delete(:expires_in) || opts.delete(:expires_in)
       @expires_in      &&= @expires_in.to_i
       @expires_at        = Time.now.to_i + @expires_in if @expires_in
+      @expired           = opts.delete(:expired) || false
+      @revoked           = opts.delete(:revoked) || false
       @refresh_token     = opts.delete(:refresh_token) || opts.delete('refresh_token')
       @resource_owner_id = opts.delete(:resource_owner_id) || opts.delete('resource_owner_id')
+      @params            = opts
+    end
 
-      @options = {:mode          => opts.delete(:mode) || :header,
-                  :header_format => opts.delete(:header_format) || 'Bearer %s',
-                  :param_name    => opts.delete(:param_name) || 'access_token'}
-      @params = opts
+    def acceptable?(scopes)
+      accessible? && includes_scope?(*scopes)
+    end
+
+    def includes_scope?(*required_scopes)
+      required_scopes.blank? || required_scopes.any? { |s| scopes.include?(s.to_s) }
+    end
+
+    private
+
+    def accessible?
+      !expired? && !revoked?
     end
   end
 end
