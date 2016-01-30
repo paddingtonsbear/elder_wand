@@ -1,6 +1,5 @@
 module ElderWand
   class Client < OAuth2::Client
-
     # Initializes an AccessToken by making a request to the token endpoint
     #
     # @param [Hash] params a Hash of params for the token endpoint
@@ -14,8 +13,8 @@ module ElderWand
     def token_from_auth_code(code, params = {})
       params.merge!(
         headers: {
-          'Accept'        => 'application/json',
-          'Content-Type'  => 'application/json'
+          'Accept'       => 'application/json',
+          'Content-Type' => 'application/json'
         }
       )
       auth_code.get_token(code, params)
@@ -36,6 +35,10 @@ module ElderWand
         }
       }
       get_token(params)
+    end
+
+    # @wip
+    def get_client_info(client_id, client_secret)
     end
   end
 end
