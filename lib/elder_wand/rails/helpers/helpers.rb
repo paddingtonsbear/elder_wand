@@ -3,25 +3,30 @@ module ElderWand
     module Helpers
       attr_reader :access_token # [OAuth2::AccessToken]
       extend ActiveSupport::Concern
-      rescue_from Oauth2::Error, with: :elder_wand_render_strategy_error
+      rescue_from Oauth2::Error, with: :elder_wand_render_oauth_error
 
       def authenticate_user!
         user = User.find_for_database_authentication(username: params[:username])
         if user && user.valid_password?(params[:password])
           @access_token = elder_wand_create_access_token!(params[:code], user.id, ElderTree.configuration.scopes)
         else
-          elder_wand_render_strategy_error_with()
+          elder_wand_render_invalid_password_error
         end
       end
 
       def authorize_client!(*scopes)
         @elder_tree_scopes = scopes.presence || ElderWand.configuration.default_scopes
-        valid_elder_tree_client?
+        if !valid_elder_tree_client?
+          # elder_wand_render_strategy_error
+          #
+        end
       end
 
       def authorize_user!(*scopes)
         @elder_tree_scopes = scopes.presence || ElderWand.configuration.default_scopes
-        valid_elder_tree_token?
+        if !valid_elder_tree_token?
+          # elder_wand_render_strategy_error
+        end
       end
 
       def current_resource_owner
@@ -56,7 +61,7 @@ module ElderWand
 
       def valid_elder_tree_client?
         @client_app = elder_wand_get_client_app_info
-        # @client_app && @client_app.acceptable?(@elder_tree_scopes)
+        @client_app && @client_app.acceptable?(@elder_tree_scopes)
       end
 
       def elder_wand_get_token_info
@@ -92,7 +97,7 @@ module ElderWand
       end
 
       # @param [OAuth2::Error] exception the error response body
-      def elder_wand_render_strategy_error(exception)
+      def elder_wand_render_oauth_error(exception)
         response = exception.response
         status = response.status
 
