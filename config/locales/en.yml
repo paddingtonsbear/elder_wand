@@ -7,4 +7,11 @@ en:
             invalid_password: authenticate:
   elder_wand:
     authentication:
-      invalid_password: 'Invalid username or password'
+      invalid_password: 'Invalid username or password.'
+    authorization:
+      invalid_client: 'The client is not authorized to perform this request using this method.'
+      invalid_scope: 'The requested scope is invalid, unknown, or malformed.'
+      invalid_token:
+        revoked: 'The access token was revoked.'
+        expired: 'The access token expired.'
+        invalid: 'The access token is invalid.' 

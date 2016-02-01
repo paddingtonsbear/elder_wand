@@ -2,45 +2,52 @@ module ElderWand
   module Rails
     module Helpers
       extend ActiveSupport::Concern
-      # @param [ElderWand::AccessToken]
-      attr_reader :elder_wand_token
       rescue_from Oauth2::Error, with: :elder_wand_render_elder_tree_error
+      rescue_from ElderWandError, with: :elder_wand_render_elder_wand_error
 
-      # def authenticate_user!
+      # resource_owner_from_credentials do
       #   user = User.find_for_database_authentication(username: params[:username])
       #   if user && user.valid_password?(params[:password])
-      #     create_elder_wand_token!(params[:code], user.id, ElderWand.configuration.scopes)
+      #     user
       #   else
-      #     elder_wand_render_invalid_password_error
+      #     fail ElderWand::Errors::InvalidPasswordError
       #   end
       # end
 
       # def current_resource_owner
-      #   # raise "elder_wand_token not present in request header[:authorization] or params" unless elder_wand_token
-      #   # raise "not authorized user" unless elder_wand_token
-      #   @current_resource_owner ||= User.find(elder_wand_token.resource_owner_id)
+      #   @current_resource_owner ||= User.find(elder_wand_token.resource_owner_id) if elder_wand_token
+      # end
+
+      # def authenticate_user!
+      #   user = instance_eval(&Doorkeeper.configuration.resource_owner_from_credentials)
+      #   create_elder_wand_token!(params[:code], user.id, ElderWand.configuration.scopes)
       # end
 
       def authorize_client_app!(*scopes)
         @elder_wand_scopes = scopes.presence || ElderWand.configuration.default_scopes
         if !valid_elder_tree_client?
-          elder_wand_render_error(elder_wand_client_app_error)
+          fail Errors::InvalidClientError
         end
       end
 
       def authorize_resource_owner!(*scopes)
         @elder_wand_scopes = scopes.presence || ElderWand.configuration.default_scopes
         if !valid_elder_tree_token?
-          elder_wand_render_error(elder_wand_token_error)
+          fail Errors::InvalidAccessTokenError.new(elder_wand_token)
         end
       end
 
       def create_elder_wand_token!(code, resource_owner_id, scopes)
         options = {
-          resource_owner_id: resource_owner_id
+          resource_owner_id: resource_owner_id,
           scopes: scopes
         }
         @elder_wand_token = client.token_from_auth_code(code, options)
+      end
+
+      # @param [ElderWand::AccessToken]
+      def elder_wand_token
+        @elder_wand_token
       end
 
       private
@@ -82,36 +89,13 @@ module ElderWand
         header.gsub pattern, '' if header && header.match(pattern)
       end
 
-      def elder_wand_render_invalid_password_error
-        status  = 401
-        type    = :invalid_password
-        reasons = [I18n.t('elder_wand.authentication.invalid_password')]
-        elder_wand_render_error_with(status, type, reasons)
-      end
-
-      def elder_wand_token_error
-        if elder_wand_invalid_token_response?
-          ErrorWandError::AccessToken.from_access_token(elder_wand_token)
-        else
-          ErrorWandError::AccessToken.from_scopes
-        end
-      end
-
-      def elder_wand_invalid_token_response?
-        !elder_wand_token || !elder_wand_token.accessible?
-      end
-
-      def elder_wand_client_app_error
-        ErrorWandError::ClientApplication.from_scopes
-      end
-
       # Render ElderWand::ErrorWandError
       #
-      # @param [ElderWand::ErrorWandError] error, the error response for invalid clients or access_tokens
-      def elder_wand_render_error_response(error_response)
-        status = error.status
-        type   = error.error_type
-        reason = error.reason
+      # @param [ElderWand::ErrorWandError] exception, the error raised for invalid clients or access_tokens
+      def elder_wand_render_elder_wand_error(exception)
+        status = exception.status
+        type   = exception.error_type
+        reason = exception.reason
         elder_wand_render_error_with(status, type, reason)
       end
 

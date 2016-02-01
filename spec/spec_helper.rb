@@ -1,6 +1,7 @@
 ENV["RAILS_ENV"] = "test" # had to explicity state the test environment (or cucumber env.)
 ENV["RAILS_ROOT"] = File.expand_path(File.dirname(__FILE__) + '/../spec/dummy/')
-require File.expand_path(File.dirname(__FILE__) + '/../spec/dummy/config/environment')
+require File.expand_path("../dummy/config/environment", __FILE__)
+# require File.expand_path(File.dirname(__FILE__) + '/../spec/dummy/config/environment')
 
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?

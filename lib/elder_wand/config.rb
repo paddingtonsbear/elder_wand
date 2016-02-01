@@ -14,7 +14,7 @@ module ElderWand
   end
 
   class Config
-    attr_reader :default_scopes, :optional_scopes
+    attr_reader :default_scopes, :optional_scopes, :resource_owner_from_credentials
 
     def initialize(&block)
       instance_eval(&block)
