@@ -13,10 +13,8 @@ module ElderWand
     # @option opts [Array<String>] :scopes the scopes associated to the token
     # @option opts [FixNum, String] :expires_in_seconds (nil) the number of seconds in which the AccessToken will expire
     # @option opts [FixNum, String] :expires_at (nil) the epoch time in seconds in which AccessToken will expire
-    # @option opts [Symbol] :mode (:header) the transmission mode of the Access Token parameter value
-    #    one of :header, :body or :query
-    # @option opts [String] :header_format ('Bearer %s') the string format to use for the Authorization header
-    # @option opts [String] :param_name ('access_token') the parameter name to use for transmission of the
+    # @option opts [Boolean] :expired (false) token has expired
+    # @option opts [Boolean] :revoked (false) token has been revoked
     #    Access Token value in :body or :query transmission mode
     def initialize(client, token, opts = {}) # rubocop:disable Metrics/AbcSize
       @client            = client
@@ -40,8 +38,6 @@ module ElderWand
     def includes_scope?(*required_scopes)
       required_scopes.blank? || required_scopes.any? { |s| scopes.include?(s.to_s) }
     end
-
-    private
 
     def accessible?
       !expired? && !revoked?
