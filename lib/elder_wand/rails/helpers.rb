@@ -2,8 +2,11 @@ module ElderWand
   module Rails
     module Helpers
       extend ActiveSupport::Concern
-      rescue_from Oauth2::Error, with: :elder_wand_render_elder_tree_error
-      rescue_from ElderWandError, with: :elder_wand_render_elder_wand_error
+
+      included do
+        rescue_from ElderWand::Error, with: :elder_wand_render_elder_tree_error
+        rescue_from ElderWand::Errors::ElderWandError, with: :elder_wand_render_elder_wand_error
+      end
 
       # resource_owner_from_credentials do
       #   user = User.find_for_database_authentication(username: params[:username])
@@ -26,14 +29,14 @@ module ElderWand
       def authorize_client_app!(*scopes)
         @elder_wand_scopes = scopes.presence || ElderWand.configuration.default_scopes
         if !valid_elder_tree_client?
-          fail Errors::InvalidClientError
+          fail ElderWand::Errors::InvalidClientError
         end
       end
 
       def authorize_resource_owner!(*scopes)
         @elder_wand_scopes = scopes.presence || ElderWand.configuration.default_scopes
         if !valid_elder_tree_token?
-          fail Errors::InvalidAccessTokenError.new(elder_wand_token)
+          fail ElderWand::Errors::InvalidAccessTokenError.new(elder_wand_token)
         end
       end
 
