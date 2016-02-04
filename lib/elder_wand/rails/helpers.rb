@@ -21,19 +21,36 @@ module ElderWand
       #   @current_resource_owner ||= User.find(elder_wand_token.resource_owner_id) if elder_wand_token
       # end
 
-      # def authenticate_user!
-      #   user = instance_eval(&Doorkeeper.configuration.resource_owner_from_credentials)
-      #   create_elder_wand_token!(params[:code], user.id, ElderWand.configuration.scopes)
+      def elder_wand_authenticate_resource_owner!
+        user = instance_eval(&ElderWand.configuration.resource_owner_from_credentials)
+        create_elder_wand_token!(params[:code], user.id, ElderWand.configuration.scopes)
+      end
+
+      # TODO: maybe in the future we should have one method that takes care
+      # of authorizing resource_owners and clients but the I feel the current
+      # implementation is more explicit.
+      # def elder_wand_authorize!(*scopes)
+      #   @elder_wand_scopes = scopes.presence || ElderWand.configuration.default_scopes
+      #   if valid_elder_tree_token?
+      #     true
+      #   elsif valid_elder_tree_client?
+      #     true
+      #   else
+      #     raise_elder_wand_error
+      #   end
       # end
 
-      def authorize_client_app!(*scopes)
+      def elder_wand_authorize_client_app!(*scopes)
         @elder_wand_scopes = scopes.presence || ElderWand.configuration.default_scopes
         if !valid_elder_tree_client?
           fail ElderWand::Errors::InvalidClientError
         end
       end
 
-      def authorize_resource_owner!(*scopes)
+      def elder_wand_authorize_access_token!(*scopes)
+      end
+
+      def elder_wand_authorize_resource_owner!(*scopes)
         @elder_wand_scopes = scopes.presence || ElderWand.configuration.default_scopes
         if !valid_elder_tree_token?
           fail ElderWand::Errors::InvalidAccessTokenError.new(elder_wand_token)
@@ -64,12 +81,12 @@ module ElderWand
       end
 
       def valid_elder_tree_token?
-        @elder_wand_token = elder_wand_get_token_info
+        @elder_wand_token ||= elder_wand_get_token_info
         @elder_wand_token && @elder_wand_token.acceptable?(@elder_wand_scopes)
       end
 
       def valid_elder_tree_client?
-        @client_app = elder_wand_get_client_app_info
+        @client_app ||= elder_wand_get_client_app_info
         @client_app && @client_app.includes_scope?(@elder_wand_scopes)
       end
 
