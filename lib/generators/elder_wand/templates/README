@@ -1,0 +1,7 @@
+================================================================================
+Final setup before you can use elder_wand
+
+**Step**
+Go to `config/initializers/elder_wand.rb` and configure
+`resource_owner_from_credentials` block if you want to have access to the
+`current_resource_owner`.

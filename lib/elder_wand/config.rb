@@ -6,7 +6,7 @@ module ElderWand
   end
 
   def self.configure(&block)
-    @config = Config.new(&block)
+    @config = Config::Builder.call(&block)
   end
 
   def self.configuration
@@ -14,22 +14,57 @@ module ElderWand
   end
 
   class Config
-    attr_reader :default_scopes, :optional_scopes, :resource_owner_from_credentials
+    attr_reader :default_scopes,
+                :optional_scopes,
+                :provider_url,
+                :resource_owner_from_credentials
 
-    def initialize(&block)
-      instance_eval(&block)
+    def default_scopes
+      @default_scopes ||= []
     end
 
-    def default_scopes(*scopes)
-      @default_scopes = scopes
-    end
-
-    def optional_scopes(*scopes)
-      @optional_scopes = scopes
+    def optional_scopes
+      @optional_scopes ||= []
     end
 
     def scopes
       default_scopes + optional_scopes
+    end
+
+    def resource_owner_from_credentials
+      return @resource_owner_from_credentials if @resource_owner_from_credentials
+      fail 'Please configure resource_owner_from_credentials block in initializers/elder_wand.rb'
+    end
+
+    class Builder
+      def self.call(&block)
+        new(&block).build
+      end
+
+      def initialize(&block)
+        @config = Config.new
+        instance_eval(&block)
+      end
+
+      def build
+        @config
+      end
+
+      def provider_url(url)
+        @config.instance_variable_set('@provider_url', url)
+      end
+
+      def default_scopes(*scopes)
+        @config.instance_variable_set('@default_scopes', scopes)
+      end
+
+      def optional_scopes(*scopes)
+        @config.instance_variable_set('@optional_scopes', scopes)
+      end
+
+      def resource_owner_from_credentials(&block)
+        @config.instance_variable_set('@resource_owner_from_credentials', block)
+      end
     end
   end
 end

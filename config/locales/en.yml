@@ -1,10 +1,4 @@
 en:
-  activerecord:
-    errors:
-      models:
-        user:
-          attributes:
-            invalid_password: authenticate:
   elder_wand:
     authentication:
       invalid_password: 'Invalid username or password.'
@@ -14,4 +8,4 @@ en:
       invalid_token:
         revoked: 'The access token was revoked.'
         expired: 'The access token expired.'
-        invalid: 'The access token is invalid.' 
+        invalid: 'The access token is invalid.'
