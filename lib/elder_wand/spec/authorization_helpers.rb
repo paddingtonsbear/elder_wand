@@ -1,11 +1,15 @@
 module ElderWand
   module Spec
     module AuthorizationHelpers
-      def given_resource_owner_is_authenticated(resource_owner)
+      def given_resource_owner_will_be_authenticated(resource_owner)
         ElderWand.configuration.instance_variable_set(:@resource_owner_from_credentials, proc { resource_owner })
 
         access_token_options.merge!(resource_owner_id: resource_owner.id)
         allow_any_instance_of(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
+      end
+
+      def given_resource_owner_will_not_be_authenticated(resource_owner)
+        allow_any_instance_of(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
       end
 
       # Stub requests made by elder_wand_authorize_resource_owner
