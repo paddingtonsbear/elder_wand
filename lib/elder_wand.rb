@@ -16,5 +16,7 @@ require 'elder_wand/access_token'
 require 'elder_wand/client_application'
 require 'elder_wand/rails/helpers'
 
+require 'elder_wand/spec/helpers'
+
 module ElderWand
 end

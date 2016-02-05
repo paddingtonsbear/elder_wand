@@ -8,7 +8,7 @@ module ElderWand
 
     # Initalize an ClientApplication
     #
-    # @param [Client] client the OAuth2::Client instance
+    # @param [Client] client the ElderWand::Client instance
     # @param [Hash] opts the options to create the Application with
     # @option opts [String] :uid the client app uid
     # @option opts [String] :name the client app name
