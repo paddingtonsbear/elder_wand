@@ -15,7 +15,7 @@ ElderWand.configure do
     # if user && user.valid_password?(params[:password])
     #   user
     # else
-    #   raise Doorkeeper::Errors::InvalidPasswordError
+    #   raise ElderWand::Errors::InvalidPasswordError
     # end
   end
 end

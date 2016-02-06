@@ -64,16 +64,6 @@ module ElderWand
         allow(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
       end
 
-      # def given_client_application_exists(opts = {})
-      #   client_options.merge!(opts)
-      #   allow_any_instance_of(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
-      # end
-      #
-      # def given_client_application_does_not_exist(opts = {})
-      #   client_options.merge!(opts)
-      #   allow_any_instance_of(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
-      # end
-
       def elder_wand_success_client(opts = {})
         ElderWand::Client.new(client_options[:uid], client_options[:secret], site: ElderWand.configuration.provider_url) do |builder|
           builder.adapter :test do |stub|
