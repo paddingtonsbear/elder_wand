@@ -2,14 +2,12 @@ module ElderWand
   module Spec
     module AuthorizationHelpers
       def given_resource_owner_will_be_authenticated(resource_owner)
-        ElderWand.configuration.instance_variable_set(:@resource_owner_from_credentials, proc { resource_owner })
-
         access_token_options.merge!(resource_owner_id: resource_owner.id)
-        allow_any_instance_of(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
+        allow(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
       end
 
-      def given_resource_owner_will_not_be_authenticated(resource_owner)
-        allow_any_instance_of(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
+      def given_resource_owner_will_not_be_authenticated
+        allow(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
       end
 
       # Stub requests made by elder_wand_authorize_resource_owner
@@ -24,7 +22,7 @@ module ElderWand
       # @option opts [Boolean] :revoked (false) token has been revoked
       def given_resource_owner_will_be_authorized(opts = {})
         access_token_options.merge!(opts)
-        allow_any_instance_of(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
+        allow(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
       end
 
       # Stub requests made by elder_wand_authorize_client_app
@@ -39,7 +37,7 @@ module ElderWand
       # @option opts [Boolean] :revoked (false) token has been revoked
       def given_resource_owner_will_not_be_authorized(opts = {})
         access_token_options.merge(opts)
-        allow_any_instance_of(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
+        allow(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
       end
 
       # Stub requests made by elder_wand_authorize_client_app
@@ -51,7 +49,7 @@ module ElderWand
       # @option opts [Array<String>] :scopes the scopes associated to the token
       def given_client_application_will_be_authorized(opts = {})
         client_options.merge!(opts)
-        allow_any_instance_of(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
+        allow(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
       end
 
       # Stub requests made by elder_wand_authorize_client_app
@@ -63,7 +61,7 @@ module ElderWand
       # @option opts [Array<String>] :scopes the scopes associated to the token
       def given_client_application_will_not_be_authorized(opts = {})
         client_options.merge!(opts)
-        allow_any_instance_of(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
+        allow(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
       end
 
       # def given_client_application_exists(opts = {})
@@ -81,7 +79,7 @@ module ElderWand
           builder.adapter :test do |stub|
             stub.post('/oauth/token') { |env| [201, json_header, access_token_success_body] }
             stub.get('/oauth/token/info') { |env| [200, json_header, access_token_success_body] }
-            stub.get('/oauth/application/info') { |env| [200, json_header, client_app_success_body] }
+            stub.get('/oauth/application/info') { |env| [200, json_header, client_application_success_body] }
             stub.post('/oauth/revoke') { |env| [200, json_header, {}] }
           end
         end
@@ -116,12 +114,12 @@ module ElderWand
             code: 401,
             error_type: 'invalid'
           },
-          reasons: ['some errors']
+          errors: ['some errors']
         )
       end
 
       def client_options
-        {
+        @client_options ||= {
           uid: 'uid',
           name: 'name',
           secret: 'secret',
@@ -130,7 +128,7 @@ module ElderWand
       end
 
       def access_token_options
-        {
+        @access_token_options ||= {
           scopes:            ElderWand.configuration.scopes,
           revoked:           false,
           expired:           false,

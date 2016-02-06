@@ -23,7 +23,7 @@ module ElderWand
 
       def elder_wand_authenticate_resource_owner!
         user = instance_eval(&ElderWand.configuration.resource_owner_from_credentials)
-        create_elder_wand_token!(params[:code], user.id, ElderWand.configuration.scopes)
+        create_elder_wand_token!(params[:code], user.try(:id), ElderWand.configuration.scopes)
       end
 
       # TODO: maybe in the future we should have one method that takes care
@@ -62,7 +62,7 @@ module ElderWand
           resource_owner_id: resource_owner_id,
           scopes: scopes
         }
-        @elder_wand_token = client.token_from_auth_code(code, options)
+        @elder_wand_token = elder_wand_client.token_from_auth_code(code, options)
       end
 
       # @param [ElderWand::AccessToken]
@@ -76,7 +76,7 @@ module ElderWand
         @elder_wand_client ||= ElderWand::Client.new(
           params[:client_id],
           params[:client_secret],
-          site: Elderwand.configuration.provider_url
+          site: ElderWand.configuration.provider_url
         )
       end
 
@@ -96,7 +96,7 @@ module ElderWand
       end
 
       def elder_wand_get_client_app_info
-        elder_wand_client.get_client_info(params[:client_id], params[:client_secret])
+        elder_wand_client.get_client_info
       end
 
       def elder_wand_token_from_params
@@ -113,21 +113,21 @@ module ElderWand
       #
       # @param [ElderWand::ErrorWandError] exception, the error raised for invalid clients or access_tokens
       def elder_wand_render_elder_wand_error(exception)
-        status = exception.status
-        type   = exception.error_type
-        reason = exception.reason
-        elder_wand_render_error_with(status, type, reason)
+        status  = exception.status
+        type    = exception.error_type
+        reasons = exception.reasons
+        elder_wand_render_error_with(status, type, reasons)
       end
 
       # Render ElderWand::Error < Oauth::Error
       #
       # @param [ElderWand::Error] exception, the error response body from ElderTree
       def elder_wand_render_elder_tree_error(exception)
-        response = exception.response
-        status   = response.status
-        type     = exception.error_type
-        reason   = exception.reason
-        elder_wand_render_error_with(status, type, reason)
+        response  = exception.response
+        status    = response.status
+        type      = exception.error_type
+        reasons   = exception.reasons
+        elder_wand_render_error_with(status, type, reasons)
       end
 
       # Render errors with status, error_type and reasons

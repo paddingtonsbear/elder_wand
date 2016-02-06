@@ -23,7 +23,7 @@ module ElderWand::Errors
 
     it { expect(subject).to respond_to(:status) }
     it { expect(subject).to respond_to(:error_type) }
-    it { expect(subject).to respond_to(:reason) }
+    it { expect(subject).to respond_to(:reasons) }
     it { expect(subject).to respond_to(:response) }
   end
 end

@@ -17,17 +17,18 @@ module ElderWand
     # @option opts [Boolean] :revoked (false) token has been revoked
     #    Access Token value in :body or :query transmission mode
     def initialize(client, token, opts = {}) # rubocop:disable Metrics/AbcSize
+      opts = HashWithIndifferentAccess.new(opts)
       @client            = client
       @token             = token.to_s
-      @scopes            = opts.delete(:scopes) || opts.delete('scopes') || []
-      @expires_in        = opts.delete(:expires_in_seconds) || opts.delete('expires_in_seconds')
-      @expires_in      ||= opts.delete(:expires_in) || opts.delete(:expires_in)
+      @scopes            = opts.delete(:scopes) || []
+      @expires_in        = opts.delete(:expires_in_seconds)
+      @expires_in      ||= opts.delete(:expires_in)
       @expires_in      &&= @expires_in.to_i
       @expires_at        = Time.now.to_i + @expires_in if @expires_in
       @expired           = opts.delete(:expired) || false
       @revoked           = opts.delete(:revoked) || false
-      @refresh_token     = opts.delete(:refresh_token) || opts.delete('refresh_token')
-      @resource_owner_id = opts.delete(:resource_owner_id) || opts.delete('resource_owner_id')
+      @refresh_token     = opts.delete(:refresh_token)
+      @resource_owner_id = opts.delete(:resource_owner_id)
       @params            = opts
     end
 

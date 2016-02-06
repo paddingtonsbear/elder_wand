@@ -23,7 +23,7 @@ module ElderWand
       @params = opts
     end
 
-    def includes_scope?(*required_scopes)
+    def includes_scope?(required_scopes = [])
       required_scopes.blank? || required_scopes.any? { |s| scopes.include?(s.to_s) }
     end
   end

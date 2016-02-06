@@ -8,6 +8,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'elder_wand'
 require 'rspec/rails'
 require 'pry'
+require 'json_spec'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -31,6 +32,7 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
   config.include ElderWand::Spec::Helpers
+  config.include JsonSpec::Helpers
 end
 
 Faraday.default_adapter = :test
