@@ -2,11 +2,18 @@ module ElderWand
   module Spec
     module AuthorizationHelpers
       def given_resource_owner_will_be_authenticated(resource_owner)
+        ElderWand.configure do
+          resource_owner_from_credentials { resource_owner }
+        end
+
         access_token_options.merge!(resource_owner_id: resource_owner.id)
         allow(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
       end
 
       def given_resource_owner_will_not_be_authenticated
+        ElderWand.configure do
+           resource_owner_from_credentials { raise ElderWand::Errors::InvalidPasswordError }
+         end
         allow(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
       end
 

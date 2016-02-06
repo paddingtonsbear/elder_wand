@@ -27,6 +27,7 @@ describe ApiController, 'authentication' do
     end
 
     it 'returns an error json body' do
+      # binding.pry
       expect(response_body).to have_json_path('meta')
       expect(response_body).to have_json_path('errors')
       expect(parsed_response['meta']['error_type']).to eq 'invalid_password'

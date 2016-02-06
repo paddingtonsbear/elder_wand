@@ -23,7 +23,7 @@ module ElderWand
 
       def elder_wand_authenticate_resource_owner!
         user = instance_eval(&ElderWand.configuration.resource_owner_from_credentials)
-        create_elder_wand_token!(params[:code], user.try(:id), ElderWand.configuration.scopes)
+        create_elder_wand_token!(params[:code], user.id, ElderWand.configuration.scopes)
       end
 
       # TODO: maybe in the future we should have one method that takes care

@@ -49,7 +49,7 @@ describe ClientApplication do
     end
 
     it 'returns true if the scope is supported' do
-      expect(target.includes_scope?('likes', 'ratings')).to be true
+      expect(target.includes_scope?(['likes', 'ratings'])).to be true
     end
 
     it 'returns true if the input is blank' do
@@ -57,11 +57,11 @@ describe ClientApplication do
     end
 
     it 'returns true if at least one scope is supported' do
-      expect(target.includes_scope?('social', 'likes')).to be true
+      expect(target.includes_scope?(['social', 'likes'])).to be true
     end
 
     it 'returns false if the scope is not supported' do
-      expect(target.includes_scope?('invalid')).to be false
+      expect(target.includes_scope?(['invalid'])).to be false
     end
   end
 end

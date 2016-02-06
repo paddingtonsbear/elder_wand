@@ -13,6 +13,10 @@ module ElderWand
     @config || (fail MissingConfiguration.new)
   end
 
+  def self.reset_configuration
+    @config = nil
+  end
+
   class Config
     attr_reader :default_scopes,
                 :optional_scopes,
