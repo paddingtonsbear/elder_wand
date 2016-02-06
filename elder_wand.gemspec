@@ -16,13 +16,12 @@ Gem::Specification.new do |s|
 
   s.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.rdoc']
 
-  s.add_dependency 'rails', '~> 4.2.5.1'
-  # s.add_dependency 'devise'
+  s.add_dependency 'rails', '>= 4.2.5.1'
   s.add_dependency 'oauth2', '~> 1.0.0'
 
   s.add_development_dependency 'pg'
   s.add_development_dependency 'pry'
-  s.add_development_dependency 'rspec-rails', '~> 3.4.0'
-  s.add_development_dependency 'cucumber-rails', '~> 1.4.2'
-  s.add_development_dependency 'database_cleaner', '~> 1.5.1'
+  s.add_development_dependency 'rspec-rails', '>= 3.4.0'
+  s.add_development_dependency 'json_spec', '>= 1.1.4'
+  s.add_development_dependency 'database_cleaner', '>= 1.5.1'
 end

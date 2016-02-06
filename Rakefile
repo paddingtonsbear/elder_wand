@@ -21,6 +21,13 @@ load 'rails/tasks/engine.rake'
 load 'rails/tasks/statistics.rake'
 
 
+namespace :elder_wand do
+  desc "Install elder_wand in dummy app"
+  task :install do
+    cd 'spec/dummy'
+    system 'bundle exec rails g elder_wand:install --force'
+  end
+end
+
 
 Bundler::GemHelper.install_tasks
-
