@@ -8,46 +8,19 @@ module ElderWand
         rescue_from ElderWand::Errors::ElderWandError, with: :elder_wand_render_elder_wand_error
       end
 
-      # resource_owner_from_credentials do
-      #   user = User.find_for_database_authentication(username: params[:username])
-      #   if user && user.valid_password?(params[:password])
-      #     user
-      #   else
-      #     fail ElderWand::Errors::InvalidPasswordError
-      #   end
-      # end
-
-      # def current_resource_owner
-      #   @current_resource_owner ||= User.find(elder_wand_token.resource_owner_id) if elder_wand_token
-      # end
+      # alias_method :expecto_petronum, :elder_wand_authorize_resource_owner
+      # alias_method :avada_kedavra, :elder_wand_token
 
       def elder_wand_authenticate_resource_owner!
         user = instance_eval(&ElderWand.configuration.resource_owner_from_credentials)
         create_elder_wand_token!(params[:code], user.id, ElderWand.configuration.scopes)
       end
 
-      # TODO: maybe in the future we should have one method that takes care
-      # of authorizing resource_owners and clients but the I feel the current
-      # implementation is more explicit.
-      # def elder_wand_authorize!(*scopes)
-      #   @elder_wand_scopes = scopes.presence || ElderWand.configuration.default_scopes
-      #   if valid_elder_tree_token?
-      #     true
-      #   elsif valid_elder_tree_client?
-      #     true
-      #   else
-      #     raise_elder_wand_error
-      #   end
-      # end
-
       def elder_wand_authorize_client_app!(*scopes)
         @elder_wand_scopes = scopes.presence || ElderWand.configuration.default_scopes
         if !valid_elder_tree_client?
           fail ElderWand::Errors::InvalidClientError
         end
-      end
-
-      def elder_wand_authorize_access_token!(*scopes)
       end
 
       def elder_wand_authorize_resource_owner!(*scopes)
@@ -65,7 +38,7 @@ module ElderWand
         @elder_wand_token = elder_wand_client.token_from_auth_code(code, options)
       end
 
-      # @param [ElderWand::AccessToken]
+      # @return [ElderWand::AccessToken]
       def elder_wand_token
         @elder_wand_token
       end
