@@ -9,7 +9,7 @@ module ElderWand
       end
 
       # alias_method :expecto_petronum, :elder_wand_authorize_resource_owner
-      # alias_method :avada_kedavra, :elder_wand_token
+      # alias_method :avada_kedavra, :elder_wand_revoke_token
 
       def elder_wand_authenticate_resource_owner!
         user = instance_eval(&ElderWand.configuration.resource_owner_from_credentials)
@@ -33,10 +33,13 @@ module ElderWand
       def create_elder_wand_token!(code, resource_owner_id, scopes)
         options = {
           resource_owner_id: resource_owner_id,
-          scopes: scopes
+          scope: scopes.join(' ')
         }
         @elder_wand_token = elder_wand_client.token_from_auth_code(code, options)
       end
+
+      # TODO: add create_token_from_password
+      # revoke token 
 
       # @return [ElderWand::AccessToken]
       def elder_wand_token

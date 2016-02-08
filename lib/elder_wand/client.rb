@@ -31,6 +31,15 @@ module ElderWand
       auth_code.get_token(code, params)
     end
 
+    # grant_type: 'password',
+    # client_id: 'uid',
+    # client_secret: 'invalid secret',
+    # resource_owner_id: 1,
+    # def token_from_password(params)
+    #   params.merge!(grant_type: 'password', client_id: id, client_secret: secret)
+    #   get_token(params)
+    # end
+
     # Initializes an AccessToken by making a request to the oauth/token/info endpoint
     #
     # @param [String] The access_token
@@ -70,6 +79,7 @@ module ElderWand
     def revoke_token(access_token)
       revoke_url     = '/oauth/revoke'
       opts           = {}
+      # opts[:params]  = { token: access_token }
       opts[:headers] = json_headers
       opts[:headers]['Authorization'] = "Bearer #{access_token}"
       opts[:raise_errors] = false

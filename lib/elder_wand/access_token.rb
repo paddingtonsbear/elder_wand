@@ -4,6 +4,10 @@ module ElderWand
     alias_method :revoked?, :revoked
     alias_method :expired?, :expired
 
+    # TODO:
+    # 1. change scopes to scope, also scopes can be returned as a string or array
+    # 2. add attr_accessor token_type
+    #
     # Initalize an AccessToken
     #
     # @param [Client] client the OAuth2::Client instance
@@ -20,7 +24,7 @@ module ElderWand
       opts = HashWithIndifferentAccess.new(opts)
       @client            = client
       @token             = token.to_s
-      @scopes            = opts.delete(:scopes) || []
+      @scopes            = opts.delete(:scopes) || [] # change to scope
       @expires_in        = opts.delete(:expires_in_seconds)
       @expires_in      ||= opts.delete(:expires_in)
       @expires_in      &&= @expires_in.to_i
