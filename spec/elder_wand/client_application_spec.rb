@@ -31,21 +31,21 @@ describe ClientApplication do
       expect(target.secret).to eq 'secret'
     end
 
-    it 'initializes with an array scopes' do
-      hash[:scopes] = ['likes', 'ratings']
+    it 'converts a string containing scopes into an array' do
+      hash[:scope] = 'likes ratings'
       expect(target.scopes).to be_a(Array)
-      expect(target.scopes).not_to be_empty
+      expect(target.scopes).to match_array(['likes', 'ratings'])
     end
 
     it 'initializes scopes with an empty array if param :scopes blank' do
-      hash[:scopes] = nil
+      hash[:scope] = nil
       expect(target.scopes).to be_a(Array)
     end
   end
 
   describe '#includes_scope?' do
     let(:hash) do
-      { scopes: ['likes', 'ratings'] }
+      { scope: 'likes ratings' }
     end
 
     it 'returns true if the scope is supported' do
