@@ -124,6 +124,8 @@ List of all errors
 ## Testing
 This gem includes test helpers that stub all requests made to [ElderTree](https://github.com/paddingtonsbear/elder_tree). These helpers
 include:
+* `given_access_token_will_be_revoked`
+* `given_access_token_will_not_be_revoked`
 * `given_resource_owner_will_be_authenticated(opts = {})`
 * `given_resource_owner_will_not_be_authenticated`
 * `given_resource_owner_will_be_authorized(opts = {})`
