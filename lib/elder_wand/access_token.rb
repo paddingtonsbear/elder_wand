@@ -4,17 +4,13 @@ module ElderWand
     alias_method :revoked?, :revoked
     alias_method :expired?, :expired
 
-    # TODO:
-    # 1. change scopes to scope, also scopes can be returned as a string or array
-    # 2. add attr_accessor token_type
-    #
     # Initalize an AccessToken
     #
     # @param [Client] client the OAuth2::Client instance
     # @param [String] token the Access Token value
     # @param [Hash] opts the options to create the Access Token with
     # @option opts [String] :refresh_token (nil) the refresh_token value
-    # @option opts [Array<String>] :scopes the scopes associated to the token
+    # @option opts [String] :scope a string of scope associated to the token separated by a space
     # @option opts [FixNum, String] :expires_in_seconds (nil) the number of seconds in which the AccessToken will expire
     # @option opts [FixNum, String] :expires_at (nil) the epoch time in seconds in which AccessToken will expire
     # @option opts [Boolean] :expired (false) token has expired
@@ -24,7 +20,7 @@ module ElderWand
       opts = HashWithIndifferentAccess.new(opts)
       @client            = client
       @token             = token.to_s
-      @scopes            = opts.delete(:scopes) || [] # change to scope
+      @scopes            = scope_to_array(opts.delete(:scope))
       @expires_in        = opts.delete(:expires_in_seconds)
       @expires_in      ||= opts.delete(:expires_in)
       @expires_in      &&= @expires_in.to_i
@@ -46,6 +42,13 @@ module ElderWand
 
     def accessible?
       !expired? && !revoked?
+    end
+
+    private
+
+    def scope_to_array(scope_string)
+      return [] if scope_string.blank?
+      scope_string.split(' ')
     end
   end
 end

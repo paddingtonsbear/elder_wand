@@ -62,12 +62,20 @@ describe AccessToken do
      expect(target.expires_at).to be_a(Integer)
     end
 
-    it 'initializes with an array scopes' do
-     hash = { access_token: token, scopes: ['likes', 'ratings'] }
+    it 'converts a string containing scopes into an array' do
+     hash = { access_token: token, scope: 'likes ratings' }
      target = AccessToken.from_hash(client, hash)
 
      expect(target.scopes).to be_a(Array)
-     expect(target.scopes).not_to be_empty
+     expect(target.scopes).to match_array(['likes', 'ratings'])
+    end
+
+    it 'intializes scopes to an empty string if :scope is blank' do
+      hash = { access_token: token }
+      target = AccessToken.from_hash(client, hash)
+
+      expect(target.scopes).to be_a(Array)
+      expect(target.scopes).to be_empty
     end
 
     it 'initializes with an integer resource_owner_id' do
@@ -103,7 +111,7 @@ describe AccessToken do
 
   describe '#includes_scope?' do
     let(:hash) do
-      { access_token: token, scopes: ['likes', 'ratings'] }
+      { access_token: token, scope: 'likes ratings' }
     end
     let(:target) { AccessToken.from_hash(client, hash) }
 
@@ -126,7 +134,7 @@ describe AccessToken do
 
   describe '#acceptable?' do
     let(:hash) do
-      { access_token: token, scopes: ['likes', 'ratings'], expired: false, revoked: false }
+      { access_token: token, scope: 'likes ratings', expired: false, revoked: false }
     end
     let(:target) { AccessToken.from_hash(client, hash) }
 
