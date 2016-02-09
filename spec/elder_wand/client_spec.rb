@@ -32,7 +32,7 @@ describe ElderWand::Client do
             'Authorization' => 'code'
           },
           params: {
-            scopes: ['something'],
+            scope: 'something',
             resource_owner_id: 1
           },
           raise_errors: false
@@ -41,7 +41,7 @@ describe ElderWand::Client do
       let(:params) do
         {
           headers: { 'Authorization' => 'code' },
-          scopes: ['something'],
+          scope: 'something',
           resource_owner_id: 1
         }
       end
@@ -51,7 +51,7 @@ describe ElderWand::Client do
           url: token_url,
           status: 201,
           body: MultiJson.encode(
-                  scopes:            ['swim', 'dance'],
+                  scope:            'swim dance',
                   revoked:           false,
                   expired:           false,
                   expires_in:        20,
@@ -101,7 +101,7 @@ describe ElderWand::Client do
           url: token_url,
           status: 201,
           body: MultiJson.encode(
-                  scopes:            ['swim', 'dance'],
+                  scope:            'swim dance',
                   revoked:           false,
                   expired:           false,
                   expires_in:        20,
@@ -133,7 +133,7 @@ describe ElderWand::Client do
           url: token_info_url,
           status: 201,
           body: MultiJson.encode(
-                  scopes:            ['swim', 'dance'],
+                  scope:            'swim dance',
                   revoked:           false,
                   expired:           false,
                   expires_in:        20,
@@ -192,7 +192,7 @@ describe ElderWand::Client do
           'Accept'        => 'application/json',
           'Content-Type'  => 'application/json',
         },
-        scopes: ['something'],
+        scope: 'something',
         resource_owner_id: 1
       }
     end
@@ -203,7 +203,7 @@ describe ElderWand::Client do
           url: token_url,
           status: 201,
           body: MultiJson.encode(
-                  scopes:            ['swim', 'dance'],
+                  scope:            'swim dance',
                   revoked:           false,
                   expired:           false,
                   expires_in:        20,
@@ -251,6 +251,72 @@ describe ElderWand::Client do
     end
   end
 
+  describe '#token_from_password_strategy' do
+    let(:params) do
+      {
+        scope: ['something'],
+        resource_owner_id: 1
+      }
+    end
+    let(:expected_params) do
+      {
+        scope:             ['something'],
+        grant_type:        'password',
+        client_id:         client_id,
+        client_secret:     client_secret,
+        resource_owner_id: 1,
+      }
+    end
+
+    context 'request successful' do
+      subject do
+        elder_wand_client(
+          url: token_url,
+          status: 201,
+          body: MultiJson.encode(
+                  scope:            'swim dance',
+                  revoked:           false,
+                  expired:           false,
+                  expires_in:        20,
+                  access_token:      'some token',
+                  refresh_token:     'refresh token',
+                  resource_owner_id: 1
+                )
+        )
+      end
+
+      it 'makes a request with the appropriate params' do
+        expect(subject).to receive(:get_token).with(expected_params)
+        subject.token_from_password_strategy(params)
+      end
+
+      it 'initializes an AccessToken' do
+        token = subject.token_from_password_strategy(params)
+        expect(token).to be_a ElderWand::AccessToken
+      end
+    end
+
+    context 'request fails' do
+      subject do
+        elder_wand_client(
+          url: token_url,
+          status: 401,
+          body: MultiJson.encode(
+                  meta: {
+                    code: 401,
+                    error_type: 'invalid'
+                  },
+                  reasons: ['some errors']
+                )
+        )
+      end
+
+      it 'raises an error' do
+        expect { subject.token_from_password_strategy(params) }.to raise_error(ElderWand::Errors::RequestError)
+      end
+    end
+  end
+
   describe '#get_client_info' do
     context 'request successful' do
       subject do
@@ -261,7 +327,7 @@ describe ElderWand::Client do
                   uid: 'some uid',
                   name: 'some client app name',
                   secret: 'some client app secret',
-                  scopes: ['swim', 'dance']
+                  scope: 'swim dance'
                 )
         )
       end

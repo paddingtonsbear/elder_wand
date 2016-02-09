@@ -25,20 +25,23 @@ module ElderWand
     #
     # @param [String] code, client application authorization code
     # @param [Hash] params a Hash of params for the token endpoint
-    # @param [Class] class of access token for easier subclassing ElderWand::AccessToken
     # @return [AccessToken] the initalized AccessToken
     def token_from_auth_code(code, params = {})
       auth_code.get_token(code, params)
     end
 
-    # grant_type: 'password',
-    # client_id: 'uid',
-    # client_secret: 'invalid secret',
-    # resource_owner_id: 1,
-    # def token_from_password(params)
-    #   params.merge!(grant_type: 'password', client_id: id, client_secret: secret)
-    #   get_token(params)
-    # end
+    # Initializes an AccessToken by making a request to the token endpoint using
+    # a password strategy
+    #
+    # @param [String] code, client application authorization code
+    # @param [Hash] params a Hash of params for the token endpoint
+    # @option params [Array<String>] :scope the scopes to be associated with the token
+    # @option params [FixNum, String] :resource_owner_id the owner of the resource id
+    # @return [AccessToken] the initalized AccessToken
+    def token_from_password_strategy(params = {})
+      params.merge!(grant_type: 'password', client_id: id, client_secret: secret)
+      get_token(params)
+    end
 
     # Initializes an AccessToken by making a request to the oauth/token/info endpoint
     #
