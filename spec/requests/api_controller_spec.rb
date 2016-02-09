@@ -27,7 +27,6 @@ describe ApiController, 'authentication' do
     end
 
     it 'returns an error json body' do
-      # binding.pry
       expect(response_body).to have_json_path('meta')
       expect(response_body).to have_json_path('errors')
       expect(parsed_response['meta']['error_type']).to eq 'invalid_password'
@@ -36,11 +35,34 @@ describe ApiController, 'authentication' do
   end
 end
 
+describe ApiController, 'revoke token' do
+  let(:user)            { User.create(name: 'name', password: 'password') }
+  let(:token)           { 'some_access_token' }
+  let(:parsed_response) { parse_json(response.body) }
+  let(:response_body)   { response.body }
+
+  context 'successful' do
+    it 'is revoked' do
+      given_access_token_will_be_revoked
+      get signout_path, params: { token: token }
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
+  context 'failed' do
+    it 'is not revoked' do
+      given_access_token_will_not_be_revoked
+      get signout_path, params: { token: token }
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+end
+
 describe ApiController, 'authorize resource_owner' do
   let(:user)            { User.create(name: 'name', password: 'password') }
   let(:parsed_response) { parse_json(response.body) }
   let(:response_body)   { response.body }
-  let(:scopes)          { [:public, :admin] }
+  let(:scopes)          { 'public admin' }
 
   context 'successful' do
     context 'without scopes' do
@@ -55,7 +77,7 @@ describe ApiController, 'authorize resource_owner' do
       it 'is authorized to perform an action' do
         opts = {
           resource_owner_id: user.id,
-          scopes: scopes
+          scope: scopes
         }
         given_resource_owner_will_be_authorized(opts)
         get resource_with_scope_path
@@ -133,7 +155,7 @@ describe ApiController, 'authorize resource_owner' do
       before do
         opts = {
           resource_owner_id: user.id,
-          scopes: [:invalid, :scopes]
+          scopes: 'invalid scopes'
         }
         given_resource_owner_will_be_authorized(opts)
         get resource_with_scope_path
@@ -157,7 +179,7 @@ describe ApiController, 'authorize client application' do
   let(:user)            { User.create(name: 'name', password: 'password') }
   let(:parsed_response) { parse_json(response.body) }
   let(:response_body)   { response.body }
-  let(:scopes)          { [:public, :admin] }
+  let(:scopes)          { 'public admin' }
 
   context 'successful' do
     context 'without scopes' do
@@ -172,7 +194,7 @@ describe ApiController, 'authorize client application' do
       it 'is authorized to perform an action' do
         opts = {
           resource_owner_id: user.id,
-          scopes: scopes
+          scope: scopes
         }
         given_client_application_will_be_authorized(opts)
         get client_with_scope_path
@@ -204,7 +226,7 @@ describe ApiController, 'authorize client application' do
       before do
         opts = {
           resource_owner_id: user.id,
-          scopes: [:invalid, :scopes]
+          scope: 'invalid scopes'
         }
         given_client_application_will_be_authorized(opts)
         get client_with_scope_path

@@ -1,6 +1,14 @@
 module ElderWand
   module Spec
     module AuthorizationHelpers
+      def given_access_token_will_be_revoked
+        allow(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
+      end
+
+      def given_access_token_will_not_be_revoked
+        allow(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
+      end
+
       def given_resource_owner_will_be_authenticated(resource_owner)
         ElderWand.configure do
           resource_owner_from_credentials { resource_owner }
@@ -53,7 +61,7 @@ module ElderWand
       # @option opts [String] :uid the client app uid
       # @option opts [String] :name the client app name
       # @option opts [String] :secret the client app secret
-      # @option opts [Array<String>] :scopes the scopes associated to the token
+      # @option opts [String] :scope the scopes associated to the token
       def given_client_application_will_be_authorized(opts = {})
         client_options.merge!(opts)
         allow(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
@@ -65,7 +73,7 @@ module ElderWand
       # @option opts [String] :uid the client app uid
       # @option opts [String] :name the client app name
       # @option opts [String] :secret the client app secret
-      # @option opts [Array<String>] :scopes the scopes associated to the token
+      # @option opts [String] :scope the scopes associated to the token
       def given_client_application_will_not_be_authorized(opts = {})
         client_options.merge!(opts)
         allow(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
@@ -120,13 +128,13 @@ module ElderWand
           uid: 'uid',
           name: 'name',
           secret: 'secret',
-          scopes: ElderWand.configuration.scopes
+          scope: ElderWand.configuration.scopes.join(' ')
         }
       end
 
       def access_token_options
         @access_token_options ||= {
-          scopes:            ElderWand.configuration.scopes,
+          scope:             ElderWand.configuration.scopes.join(' '),
           revoked:           false,
           expired:           false,
           expires_in:        20,

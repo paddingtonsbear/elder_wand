@@ -4,5 +4,6 @@ Rails.application.routes.draw do
   get  'resource',            to: 'api#resource'
   get  'resource_with_scope', to: 'api#resource_with_scope'
   get  'signin',              to: 'api#signin'
+  get  'signout',             to: 'api#signout'
   root to: 'api#public'
 end

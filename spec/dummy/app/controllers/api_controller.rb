@@ -25,6 +25,14 @@ class ApiController < ApplicationController
     render_json
   end
 
+  def signout
+    if elder_wand_revoke_token!
+      render_json
+    else
+      render status: :unauthorized, json: {}
+    end
+  end
+
   def public
     render_json
   end
