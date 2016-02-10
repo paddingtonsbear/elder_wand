@@ -58,7 +58,7 @@ module ElderWand
     #
     # @param [Class] class of client application for objectifying response from ElderTree
     # @return [ClientApplication] the initalized ClientApplication
-    def get_client_info(client_class = ClientApplication)
+    def get_client_application_info(client_class = ClientApplication)
       app_info_url   = '/oauth/application/info'
       opts           = {}
       opts[:headers] = json_headers

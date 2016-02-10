@@ -74,7 +74,7 @@ module ElderWand
       end
 
       def elder_wand_get_client_application_info
-        elder_wand_client.get_client_info
+        elder_wand_client.get_client_application_info
       end
 
       def elder_wand_token_from_params

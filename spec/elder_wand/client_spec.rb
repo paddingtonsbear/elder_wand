@@ -317,7 +317,7 @@ describe ElderWand::Client do
     end
   end
 
-  describe '#get_client_info' do
+  describe '#get_client_application_info' do
     context 'request successful' do
       subject do
         elder_wand_client(
@@ -347,11 +347,11 @@ describe ElderWand::Client do
         expect(subject).to receive(:request).
           with(:get, app_info_url, params).
           and_call_original
-        subject.get_client_info
+        subject.get_client_application_info
       end
 
       it 'initializes a ClientApplication' do
-        app = subject.get_client_info
+        app = subject.get_client_application_info
         expect(app).to be_a ClientApplication
       end
     end
@@ -372,7 +372,7 @@ describe ElderWand::Client do
       end
 
       it 'raises an error' do
-        expect { subject.get_client_info }.to raise_error(ElderWand::Errors::RequestError)
+        expect { subject.get_client_application_info }.to raise_error(ElderWand::Errors::RequestError)
       end
     end
   end
