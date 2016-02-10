@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'oauth2', '~> 1.0.0'
 
   s.add_development_dependency 'pg'
+  s.add_development_dependency 'rails-api'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'rspec-rails', '>= 3.4.0'
   s.add_development_dependency 'json_spec', '>= 1.1.4'
