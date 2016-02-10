@@ -16,7 +16,7 @@ module ElderWand
         elder_wand_create_token!(user.id, ElderWand.configuration.scopes)
       end
 
-      def elder_wand_authorize_client_app!(*scopes)
+      def elder_wand_authorize_client_application!(*scopes)
         @elder_wand_scopes = scopes.presence || ElderWand.configuration.default_scopes
         if !valid_elder_tree_client?
           fail ElderWand::Errors::InvalidClientError
@@ -64,8 +64,8 @@ module ElderWand
       end
 
       def valid_elder_tree_client?
-        @client_app ||= elder_wand_get_client_app_info
-        @client_app && @client_app.includes_scope?(@elder_wand_scopes)
+        @elder_wand_client_application ||= elder_wand_get_client_application_info
+        @elder_wand_client_application && @elder_wand_client_application.includes_scope?(@elder_wand_scopes)
       end
 
       def elder_wand_get_token_info
@@ -73,7 +73,7 @@ module ElderWand
         elder_wand_client.get_token_info(token)
       end
 
-      def elder_wand_get_client_app_info
+      def elder_wand_get_client_application_info
         elder_wand_client.get_client_info
       end
 
