@@ -31,6 +31,7 @@ This will install the ElderWand initializer into `config/initializers/elder_wand
 - [Protecting resources with ElderWand](#protecting-resources-with-elderwand)
   - [Access Token Scopes](#access-token-scopes)
   - [Authenticated Resource Owner](#authenticated-resource-owner)
+  - [Important Note](#important-note)
 - [Using the ElderWand::Client](#using-the-elderwandclient)
 - [ElderWand Errors](#elderwand-errors)
 - [Testing](#testing)
