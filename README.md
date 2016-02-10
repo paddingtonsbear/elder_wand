@@ -60,7 +60,7 @@ eg.
 ```ruby
 class ExampleController < ApplicationController
   before_action :elder_wand_authorize_resource_owner! # requires access_tokens for all actions
-  before_action :elder_wand_authorize_client_app! # requires client_id and client_secret for all actions,
+  before_action :elder_wand_authorize_client_application! # requires client_id and client_secret for all actions,
                                                   # this is mainly for communication between internal services
   # actions
 end
@@ -86,12 +86,16 @@ class ExampleController < ApplicationController
 end
 ```
 ### Authenticated Resource Owner
-If you want to return data based on the current resource owner, in other words, the access token owner,
-you may want to define a method in your controller that returns the resource owner instance:
+The `elder_wand_authenticate_resource_owner!` helper comes in handy when you want to use the `OAuth2.0 Password Strategy` to login a user. The method first evaluates the block in `resource_owner_from_credentials` in `config/initializers/elder_wand.rb` and then makes a call to [ElderTree](https://github.com/paddingtonsbear/elder_tree) to create an access_token. 
+
+eg.
 ```ruby
 class SessionsController < ApplicationController
-  before_action :elder_wand_authenticate_resource_owner!
-
+  before_action -> { elder_wand_authenticate_resource_owner! }, only: :index
+  
+  def index
+  end
+  
   private
 
   # Find the user that owns the access token
@@ -100,6 +104,15 @@ class SessionsController < ApplicationController
   end
 end
 ```
+
+### Important Note
+Successfully calling these three helpers:
+```
+1. elder_wand_authenticate_resource_owner!
+2. elder_wand_authorize_resource_owner!
+3. elder_wand_authorize_client_application!
+```
+returns an [ElderTree::AccessToken](https://github.com/paddingtonsbear/elder_wand/blob/master/lib/elder_wand/access_token.rb) which can be accessed by calling `elder_wand_token`.
 
 ## Using the ElderWand::Client
 ```ruby
