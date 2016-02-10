@@ -121,6 +121,14 @@ List of all errors
 * [InvalidPasswordError](https://github.com/paddingtonsbear/elder_wand/blob/master/lib/elder_wand/errors/invalid_password_error.rb)
 * [RequestError](https://github.com/paddingtonsbear/elder_wand/blob/master/lib/elder_wand/errors/request_error.rb)
 
+Add the following helpers to your controllers to handle errors
+```ruby
+class ApiController < ApplicationController
+  rescue_from ElderWand::Error, with: :elder_wand_render_elder_tree_error
+  rescue_from ElderWand::Errors::ElderWandError, with: :elder_wand_render_elder_wand_error
+end
+```
+
 ## Testing
 This gem includes test helpers that stub all requests made to [ElderTree](https://github.com/paddingtonsbear/elder_tree). These helpers
 include:
