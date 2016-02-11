@@ -17,7 +17,7 @@ module ElderWand
     # @option opts [Boolean] :revoked (false) token has been revoked
     #    Access Token value in :body or :query transmission mode
     def initialize(client, token, opts = {}) # rubocop:disable Metrics/AbcSize
-      opts = HashWithIndifferentAccess.new(opts)
+      opts.deep_symbolize_keys!
       @client            = client
       @token             = token.to_s
       @scopes            = scope_to_array(opts.delete(:scope))

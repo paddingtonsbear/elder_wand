@@ -15,7 +15,7 @@ module ElderWand
     # @option opts [String] :secret the client app secret
     # @option opts [String] :scope a string of scope associated to the token separated by a space
     def initialize(client, opts = {}) # rubocop:disable Metrics/AbcSize
-      opts    = opts.with_indifferent_access
+      opts.deep_symbolize_keys!
       @client = client
       @uid    = opts.delete(:uid)
       @name   = opts.delete(:name)
