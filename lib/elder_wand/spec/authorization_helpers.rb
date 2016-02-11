@@ -62,20 +62,22 @@ module ElderWand
       # @option opts [String] :name the client app name
       # @option opts [String] :secret the client app secret
       # @option opts [String] :scope the scopes associated to the token
-      def given_client_application_will_be_authorized(opts = {})
-        client_options.merge!(opts)
+      def given_client_application_will_be_authorized(client_opts = {}, token_opts = {})
+        client_options.merge!(client_opts)
+        access_token_options.merge!(token_opts)
         allow(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
       end
 
       # Stub requests made by elder_wand_authorize_client_app
       #
       # @param [Hash] opts the options to create the Application with
-      # @option opts [String] :uid the client app uid
-      # @option opts [String] :name the client app name
-      # @option opts [String] :secret the client app secret
-      # @option opts [String] :scope the scopes associated to the token
-      def given_client_application_will_not_be_authorized(opts = {})
-        client_options.merge!(opts)
+      # @option client_opts/token_opts [String] :uid the client app uid
+      # @option client_opts/token_opts [String] :name the client app name
+      # @option client_opts/token_opts [String] :secret the client app secret
+      # @option client_opts/token_opts [String] :scope the scopes associated to the token
+      def given_client_application_will_not_be_authorized(client_opts = {}, token_opts = {})
+        client_options.merge!(client_opts)
+        access_token_options.merge!(token_opts)
         allow(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
       end
 
