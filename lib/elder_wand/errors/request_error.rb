@@ -9,10 +9,8 @@ module ElderWand
         parsed_response = @response.parsed
 
         if parsed_response.is_a?(Hash)
-          if parsed_response['meta']
-            @error_type = parsed_response['meta']['error_type']
-          end
-          @reasons = parsed_response['errors']
+          @error_type = parsed_response['error']
+          @reasons    = parsed_response['error_description']
           message << "#{@status}: #{@reasons}"
         end
 

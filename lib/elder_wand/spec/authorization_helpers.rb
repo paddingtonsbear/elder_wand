@@ -117,11 +117,8 @@ module ElderWand
 
       def elder_wand_request_failure_body
         MultiJson.encode(
-          meta: {
-            code: 401,
-            error_type: 'invalid'
-          },
-          errors: ['some errors']
+          error: 'invalid',
+          error_description: ['some errors']
         )
       end
 
