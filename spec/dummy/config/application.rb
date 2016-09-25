@@ -5,7 +5,6 @@ require "rails"
 require 'rails-api/action_controller/api'
 require "active_record/railtie"
 require "action_controller/railtie"
-require "action_mailer/railtie"
 
 Bundler.require(*Rails.groups)
 require "elder_wand"
