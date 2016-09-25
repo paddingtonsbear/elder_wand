@@ -20,7 +20,7 @@ module ElderWand
       opts.deep_symbolize_keys!
       @client            = client
       @token             = token.to_s
-      @scopes            = scope_to_array(opts.delete(:scope))
+      @scopes            = opts.delete(:scopes) || []
       @expires_in        = opts.delete(:expires_in_seconds)
       @expires_in      ||= opts.delete(:expires_in)
       @expires_in      &&= @expires_in.to_i

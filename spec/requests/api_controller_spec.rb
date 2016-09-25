@@ -62,7 +62,7 @@ describe ApiController, 'authorize resource_owner' do
   let(:user)            { User.create(name: 'name', password: 'password') }
   let(:parsed_response) { parse_json(response.body) }
   let(:response_body)   { response.body }
-  let(:scopes)          { 'public admin' }
+  let(:scopes)          { ['public', 'admin'] }
 
   context 'successful' do
     context 'without scopes' do
@@ -77,7 +77,7 @@ describe ApiController, 'authorize resource_owner' do
       it 'is authorized to perform an action' do
         opts = {
           resource_owner_id: user.id,
-          scope: scopes
+          scopes: scopes
         }
         given_resource_owner_will_be_authorized(opts)
         get resource_with_scope_path
@@ -155,7 +155,7 @@ describe ApiController, 'authorize resource_owner' do
       before do
         opts = {
           resource_owner_id: user.id,
-          scopes: 'invalid scopes'
+          scopes: ['invalid scopes']
         }
         given_resource_owner_will_be_authorized(opts)
         get resource_with_scope_path
@@ -179,7 +179,7 @@ describe ApiController, 'authorize client application' do
   let(:user)            { User.create(name: 'name', password: 'password') }
   let(:parsed_response) { parse_json(response.body) }
   let(:response_body)   { response.body }
-  let(:scopes)          { 'public admin' }
+  let(:scopes)          { ['public', 'admin'] }
 
   context 'successful' do
     context 'without scopes' do
@@ -194,7 +194,7 @@ describe ApiController, 'authorize client application' do
       it 'is authorized to perform an action' do
         opts = {
           resource_owner_id: user.id,
-          scope: scopes
+          scopes: scopes
         }
         given_client_application_will_be_authorized(opts)
         get client_with_scope_path
@@ -226,7 +226,7 @@ describe ApiController, 'authorize client application' do
       before do
         opts = {
           resource_owner_id: user.id,
-          scope: 'invalid scopes'
+          scopes: ['invalid scopes']
         }
         given_client_application_will_be_authorized(opts)
         get client_with_scope_path

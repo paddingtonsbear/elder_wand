@@ -36,6 +36,7 @@ module ElderWand
       # @option opts [Boolean] :expired (false) token has expired
       # @option opts [Boolean] :revoked (false) token has been revoked
       def given_resource_owner_will_be_authorized(opts = {})
+        # binding.pry
         access_token_options.merge!(opts)
         allow(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
       end
@@ -127,13 +128,13 @@ module ElderWand
           uid: 'uid',
           name: 'name',
           secret: 'secret',
-          scope: ElderWand.configuration.scopes.join(' ')
+          scopes: ElderWand.configuration.scopes
         }
       end
 
       def access_token_options
         @access_token_options ||= {
-          scope:             ElderWand.configuration.scopes.join(' '),
+          scopes:            ElderWand.configuration.scopes,
           revoked:           false,
           expired:           false,
           expires_in:        20,

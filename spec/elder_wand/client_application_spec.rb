@@ -32,20 +32,20 @@ describe ClientApplication do
     end
 
     it 'converts a string containing scopes into an array' do
-      hash[:scope] = 'likes ratings'
+      hash[:scopes] = ['likes', 'ratings']
       expect(target.scopes).to be_a(Array)
       expect(target.scopes).to match_array(['likes', 'ratings'])
     end
 
     it 'initializes scopes with an empty array if param :scopes blank' do
-      hash[:scope] = nil
+      hash[:scopes] = nil
       expect(target.scopes).to be_a(Array)
     end
   end
 
   describe '#includes_scope?' do
     let(:hash) do
-      { scope: 'likes ratings' }
+      { scopes: ['likes', 'ratings'] }
     end
 
     it 'returns true if the scope is supported' do

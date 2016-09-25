@@ -63,7 +63,7 @@ describe AccessToken do
     end
 
     it 'converts a string containing scopes into an array' do
-     hash = { access_token: token, scope: 'likes ratings' }
+     hash = { access_token: token, scopes: ['likes', 'ratings'] }
      target = AccessToken.from_hash(client, hash)
 
      expect(target.scopes).to be_a(Array)
@@ -111,7 +111,7 @@ describe AccessToken do
 
   describe '#includes_scope?' do
     let(:hash) do
-      { access_token: token, scope: 'likes ratings' }
+      { access_token: token, scopes: ['likes', 'ratings'] }
     end
     let(:target) { AccessToken.from_hash(client, hash) }
 
@@ -134,7 +134,7 @@ describe AccessToken do
 
   describe '#acceptable?' do
     let(:hash) do
-      { access_token: token, scope: 'likes ratings', expired: false, revoked: false }
+      { access_token: token, scopes: ['likes', 'ratings'], expired: false, revoked: false }
     end
     let(:target) { AccessToken.from_hash(client, hash) }
 
