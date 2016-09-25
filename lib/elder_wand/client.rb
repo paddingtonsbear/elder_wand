@@ -85,6 +85,10 @@ module ElderWand
       # opts[:params]  = { token: access_token }
       opts[:headers] = json_headers
       opts[:headers]['Authorization'] = "Bearer #{access_token}"
+      opts[:params]  = {
+        client_id:     id,
+        client_secret: secret
+      }
       opts[:raise_errors] = false
 
       response = request(:post, revoke_url, opts)
