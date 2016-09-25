@@ -28,10 +28,10 @@ describe ElderWand::Client do
         {
           headers: {
             'Accept'        => 'application/json',
-            'Content-Type'  => 'application/json',
+            'Content-Type'  => 'application/x-www-form-urlencoded',
             'Authorization' => 'code'
           },
-          params: {
+          body: {
             scope: 'something',
             resource_owner_id: 1
           },
