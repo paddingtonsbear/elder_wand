@@ -11,7 +11,7 @@ describe ApiController, 'authentication' do
     end
 
     it 'is authenticated to perform action' do
-      get signin_path, username: 'name', password: 'password'
+      get signin_path, params: { username: 'name', password: 'password' }
       expect(response).to have_http_status(:ok)
     end
   end
