@@ -10,8 +10,14 @@ module ElderWand
       opts = {}
       opts[:headers] = params.delete(:headers) || {}
       opts[:headers].merge!(json_headers)
-      opts[:params]       = params
       opts[:raise_errors] = false
+
+      if options[:token_method] == :post
+        opts[:body] = params
+        opts[:headers]['Content-Type'] = 'application/x-www-form-urlencoded'
+      else
+        opts[:params] = params
+      end
 
       response = request(options[:token_method], token_url, opts)
       error    = Errors::RequestError.new(response)
@@ -82,9 +88,14 @@ module ElderWand
     def revoke_token(access_token)
       revoke_url     = '/oauth/revoke'
       opts           = {}
-      # opts[:params]  = { token: access_token }
       opts[:headers] = json_headers
       opts[:headers]['Authorization'] = "Bearer #{access_token}"
+      opts[:headers]['Content-Type'] = 'application/x-www-form-urlencoded'
+      opts[:body]    = {
+        token:         access_token,
+        client_id:     id,
+        client_secret: secret
+      }
       opts[:raise_errors] = false
 
       response = request(:post, revoke_url, opts)
