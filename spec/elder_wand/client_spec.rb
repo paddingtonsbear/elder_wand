@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe ElderWand::Client do
+  let(:create_app_url) { '/oauth/applications' }
   let(:app_info_url)   { '/oauth/application/info' }
   let(:token_url)      { '/oauth/token' }
   let(:revoke_url)     { '/oauth/revoke' }
@@ -317,6 +318,71 @@ describe ElderWand::Client do
     end
   end
 
+  describe '#create_application' do
+    let(:params) do
+      {
+        name: 'name',
+        scopes: 'swim dance',
+        redirect_uri: 'some uri'
+      }
+    end
+
+    context 'request successful' do
+      subject do
+        elder_wand_client(
+          url: create_app_url,
+          status: 200,
+          body: MultiJson.encode(
+                  name: 'name',
+                  client_id: 'some uid',
+                  client_secret: 'some client app secret',
+                  scopes: ['swim', 'dance']
+                )
+        )
+      end
+
+      it 'makes a request with the appropriate params' do
+        http_opts = {
+          headers: {
+            'Accept'        => 'application/json',
+            'Content-Type'  => 'application/json',
+          },
+          params: params,
+          raise_errors: false
+        }
+        expect(subject).to receive(:request).
+          with(:post, create_app_url, http_opts).
+          and_call_original
+        subject.create_application(params)
+      end
+
+      it 'initializes a ClientApplication' do
+        app = subject.create_application(params)
+        expect(app).to be_a ClientApplication
+      end
+    end
+
+    context 'request fails' do
+      subject do
+        elder_wand_client(
+          url: create_app_url,
+          status: 422,
+          body:   MultiJson.encode(
+                    meta: {
+                      code: 422,
+                      error_type: 'unprocessible_entity'
+                    },
+                    reasons: ['some errors']
+                  )
+        )
+      end
+
+      it 'raises an error' do
+        expect { subject.create_application(params) }.to raise_error(ElderWand::Errors::RequestError)
+      end
+    end
+  end
+
   describe '#get_client_application_info' do
     context 'request successful' do
       subject do
@@ -324,16 +390,16 @@ describe ElderWand::Client do
           url: app_info_url,
           status: 200,
           body: MultiJson.encode(
-                  uid: 'some uid',
                   name: 'some client app name',
-                  secret: 'some client app secret',
-                  scope: 'swim dance'
+                  client_id: 'some uid',
+                  client_secret: 'some client app secret',
+                  scopes: ['swim', 'dance']
                 )
         )
       end
 
       it 'makes a request with the appropriate params' do
-        params = {
+        http_opts = {
           headers: {
             'Accept'        => 'application/json',
             'Content-Type'  => 'application/json',
@@ -345,7 +411,7 @@ describe ElderWand::Client do
           raise_errors: false
         }
         expect(subject).to receive(:request).
-          with(:get, app_info_url, params).
+          with(:get, app_info_url, http_opts).
           and_call_original
         subject.get_client_application_info
       end

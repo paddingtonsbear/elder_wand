@@ -17,8 +17,8 @@ describe ClientApplication do
     end
 
     it 'initializes uid with params :uid' do
-      hash[:uid] = 'some_uid'
-      expect(target.uid).to eq 'some_uid'
+      hash[:client_id] = 'some_uid'
+      expect(target.client_id).to eq 'some_uid'
     end
 
     it 'initializes name with params :name' do
@@ -27,8 +27,8 @@ describe ClientApplication do
     end
 
     it 'initializes secret with params :secret' do
-      hash[:secret] = 'secret'
-      expect(target.secret).to eq 'secret'
+      hash[:client_secret] = 'secret'
+      expect(target.client_secret).to eq 'secret'
     end
 
     it 'converts a string containing scopes into an array' do
