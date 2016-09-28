@@ -43,9 +43,23 @@ module ElderWand
         @elder_wand_token = elder_wand_client.token_from_password_strategy(options)
       end
 
+      def elder_wand_create_application!(name, scopes, redirect_uri)
+        options = {
+          name: name,
+          redirect_uri: redirect_uri,
+          scopes: scopes.join(' ')
+        }
+        @elder_wand_application = elder_wand_client.create_application(options)
+      end
+
       # @return [ElderWand::AccessToken]
       def elder_wand_token
         @elder_wand_token
+      end
+
+      # @return [ElderWand::ClientApplication]
+      def elder_wand_application
+        @elder_wand_application
       end
 
       private

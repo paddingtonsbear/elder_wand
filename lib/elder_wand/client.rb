@@ -60,6 +60,26 @@ module ElderWand
       get_token(params)
     end
 
+    # Initializes an ClientApplication by making a request to create a client application
+    #
+    # @param params [String] :name the name of the client application
+    # @param params [URI] :redirect_uri the redirect uri of the client application
+    # @param params [Array<String>] :scopes the scopes to be associated with the client application
+    # @return [ClientApplication] the initalized ClientApplication
+    def create_application(params)
+      app_info_url   = '/oauth/applications'
+      opts           = {}
+      opts[:headers] = json_headers
+      opts[:params]  = params
+      opts[:raise_errors] = false
+
+      response = request(:post, app_info_url, opts)
+      error    = Errors::RequestError.new(response)
+      fail(error) if response.status.to_s !~ /^2/
+
+      ClientApplication.from_hash(self, response.parsed)
+    end
+
     # Initializes a ClientApplication by making a request to the oauth/application/info endpoint
     #
     # @param [Class] class of client application for objectifying response from ElderTree
