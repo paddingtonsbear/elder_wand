@@ -36,7 +36,6 @@ module ElderWand
       # @option opts [Boolean] :expired (false) token has expired
       # @option opts [Boolean] :revoked (false) token has been revoked
       def given_resource_owner_will_be_authorized(opts = {})
-        # binding.pry
         access_token_options.merge!(opts)
         allow(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
       end
@@ -53,6 +52,16 @@ module ElderWand
       # @option opts [Boolean] :revoked (false) token has been revoked
       def given_resource_owner_will_not_be_authorized(opts = {})
         access_token_options.merge(opts)
+        allow(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
+      end
+
+      def given_client_application_will_be_created(client_opts = {})
+        client_options.merge!(client_opts)
+        allow(ElderWand::Client).to receive(:new).and_return elder_wand_success_client
+      end
+
+      def given_client_application_will_not_be_created(client_opts = {})
+        client_options.merge!(client_opts)
         allow(ElderWand::Client).to receive(:new).and_return elder_wand_failure_client
       end
 
@@ -83,8 +92,9 @@ module ElderWand
       end
 
       def elder_wand_success_client(opts = {})
-        ElderWand::Client.new(client_options[:uid], client_options[:secret], site: ElderWand.configuration.provider_url) do |builder|
+        ElderWand::Client.new(client_options[:client_id], client_options[:client_secret], site: ElderWand.configuration.provider_url) do |builder|
           builder.adapter :test do |stub|
+            stub.post('/oauth/applications') { |env| [201, json_header, client_application_success_body] }
             stub.post('/oauth/token') { |env| [201, json_header, access_token_success_body] }
             stub.get('/oauth/token/info') { |env| [200, json_header, access_token_success_body] }
             stub.get('/oauth/application/info') { |env| [200, json_header, client_application_success_body] }
@@ -94,8 +104,9 @@ module ElderWand
       end
 
       def elder_wand_failure_client
-        ElderWand::Client.new(client_options[:uid], client_options[:secret], site: ElderWand.configuration.provider_url) do |builder|
+        ElderWand::Client.new(client_options[:client_id], client_options[:client_secret], site: ElderWand.configuration.provider_url) do |builder|
           builder.adapter :test do |stub|
+            stub.post('/oauth/applications') { |env| [401, json_header, elder_wand_request_failure_body] }
             stub.post('/oauth/token') { |env| [401, json_header, elder_wand_request_failure_body] }
             stub.get('/oauth/token/info') { |env| [401, json_header, elder_wand_request_failure_body] }
             stub.get('/oauth/application/info') { |env| [401, json_header, elder_wand_request_failure_body] }
@@ -125,9 +136,10 @@ module ElderWand
 
       def client_options
         @client_options ||= {
-          uid: 'uid',
           name: 'name',
-          secret: 'secret',
+          client_id: 'uid',
+          client_secret: 'secret',
+          redirect_uri: 'some_uri',
           scopes: ElderWand.configuration.scopes
         }
       end

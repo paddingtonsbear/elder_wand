@@ -12,6 +12,15 @@ describe ElderWand, 'configuration' do
     end
   end
 
+  describe 'redirect_uri' do
+    it 'sets the redirect_uri' do
+      ElderWand.configure do
+        redirect_uri 'some_uri'
+      end
+      expect(subject.redirect_uri).to eq 'some_uri'
+    end
+  end
+
   describe 'default scopes' do
     it 'returns an empty array if not configured' do
       ElderWand.configure {}

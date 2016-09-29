@@ -21,6 +21,7 @@ module ElderWand
     attr_reader :default_scopes,
                 :optional_scopes,
                 :provider_url,
+                :redirect_uri,
                 :resource_owner_from_credentials
 
     def default_scopes
@@ -60,6 +61,10 @@ module ElderWand
 
       def default_scopes(*scopes)
         @config.instance_variable_set('@default_scopes', scopes)
+      end
+
+      def redirect_uri(uri)
+        @config.instance_variable_set('@redirect_uri', uri)
       end
 
       def optional_scopes(*scopes)
