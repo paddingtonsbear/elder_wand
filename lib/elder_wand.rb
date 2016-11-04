@@ -1,4 +1,3 @@
-require 'pry'
 require 'elder_wand/version'
 require 'elder_wand/engine'
 require 'elder_wand/config'
