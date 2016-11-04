@@ -67,7 +67,7 @@ module ElderWand
              }
     end
 
-    @param [OAuth2::Error] exception the error response body
+    # @param [OAuth2::Error] exception the error response body
     def render_strategy_error(exception)
       response = exception.response
       status = response.status
